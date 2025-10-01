@@ -199,7 +199,6 @@ def book_list(request):
         })
     return render(request, "bookAll.html", {"books_with_status": books_with_status})
 
-# ฟังก์ชัน request_book ยังคงเหมือนเดิม
 @login_required(login_url='/student_login')
 def request_book(request, book_id):
     student = get_object_or_404(Student, user=request.user)
@@ -209,7 +208,7 @@ def request_book(request, book_id):
     IssuedBook.objects.create(
         student=student,
         book=book,
-        issue_date=date.today(), # ใช้ date.today() แทน datetime.today().date() เพื่อความชัดเจน
+        issue_date=date.today(), 
         status="pending"
     )
     return redirect("book_list")
