@@ -1,0 +1,44 @@
+{% extends 'admin_navbar.html' %}
+{% load static %}
+{% block title %} Library Management System {% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">คำขอยืมหนังสือ (Pending)</h2>
+
+    {% if requests %}
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>นักเรียน</th>
+                <th>หนังสือ</th>
+                <th>วันที่ขอยืม</th>
+                <th>วันครบกำหนด</th>
+                <th>จัดการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for req in requests %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ req.student.user.username }}</td>
+                <td>{{ req.book.name }}</td>
+                <td>{{ req.issue_date }}</td>
+                <td>{{ req.expiry_date }}</td>
+                <td>
+                    <a href="{% url 'approve_request' req.id %}" class="btn btn-success btn-sm">อนุมัติ</a>
+                    <a href="{% url 'reject_request' req.id %}" class="btn btn-danger btn-sm">ปฏิเสธ</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="text-center">ไม่มีคำขอยืมที่รออนุมัติ</p>
+    {% endif %}
+</div>
+
+{% endblock %}

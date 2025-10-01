@@ -1,0 +1,65 @@
+{% extends 'student_navbar.html' %}
+{% load static %}
+{% block title %} All Students List {% endblock %}
+{% block css %}
+{% endblock %}
+{% block body %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">รายการหนังสือทั้งหมด</h2>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>รูปภาพ</th>
+                <th>ชื่อหนังสือ</th>
+                <th>ผู้แต่ง</th>
+                <th>ISBN</th>
+                <th>หมวดหมู่</th>
+                <th>การดำเนินการ</th>
+                <th>สถานะ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in books_with_status %} 
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if item.book.image %}
+                        <img src="{{ item.book.image.url }}" alt="{{ item.book.name }}" style="height: 100px;">
+                    {% else %}
+                        ไม่มีรูป
+                    {% endif %}
+                </td>
+                <td>{{ item.book.name }}</td>
+                <td>{{ item.book.author }}</td>
+                <td>{{ item.book.isbn }}</td>
+                <td>{{ item.book.category }}</td>
+                <td>
+                    {% if item.status == "can_request" %}
+                        <a href="{% url 'request_book' item.book.id %}" class="btn btn-primary">ขอยืม</a>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if item.status == "pending" %}
+                        <span class="badge bg-warning text-dark">รอการอนุมัติ</span>
+                    
+                    {% elif item.status == "approved" %}
+                        <span class="badge bg-success">กำลังยืม</span>
+
+                    {% elif item.status == "rejected" %}
+                        <span class="badge bg-danger">ถูกปฏิเสธ</span>
+
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" class="text-center">ไม่มีหนังสือในระบบ</td> 
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

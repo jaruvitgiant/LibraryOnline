@@ -6,29 +6,126 @@
 {% block body %}
 <div class="container mt-4">
     <h1 class="text-center"><u>All Books List</u></h1>
-    <table class="table table-hover" id="example">
+    <table class="table table-bordered">
         <thead>
             <tr>
-                <th>Sr.No</th>
-                <th>Book Name</th>
-                <th>Author</th>
-                <th>ISBN Number</th>
-                <th>Category</th>
-                <th>Delete</th>
+                <th>#</th>
+                <th>ภาพ</th>
+                <th>ชื่อหนังสือ</th>
+                <th>ผู้แต่ง</th>
+                <th>ISBN</th>
+                <th>หมวดหมู่</th>
+                <th>การจัดการ</th>
             </tr>
         </thead>
         <tbody>
             {% for book in books %}
-            <tr>
-                <td>{{forloop.counter}}.</td>
-                <td>{{book.name}}</td>
-                <td>{{book.author}}</td>
-                <td>{{book.isbn}}</td>
-                <td>{{book.category}}</td>
-                <td><a href="/delete_book/{{book.id}}/" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this book?')">Delete</a></td>
+            <tr id="row-{{book.id}}">
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if book.image %}
+                        <img src="{{ book.image.url }}" style="height: 100px;">
+                    {% endif %}
+                </td>
+                <td class="book-name">{{ book.name }}</td>
+                <td class="book-author">{{ book.author }}</td>
+                <td class="book-isbn">{{ book.isbn }}</td>
+                <td class="book-category">{{ book.category }}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm edit-btn"
+                            data-id="{{book.id}}"
+                            data-name="{{book.name}}"
+                            data-author="{{book.author}}"
+                            data-isbn="{{book.isbn}}"
+                            data-category="{{book.category}}"
+                            data-bs-toggle="modal" data-bs-target="#editModal">
+                        Edit
+                    </button>
+                    <a href="/delete_book/{{book.id}}/" class="btn btn-danger btn-sm">Delete</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Modal สำหรับแก้ไขหนังสือ -->
+    <div class="modal fade" id="editModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form id="editForm" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="modal-header">
+            <h5 class="modal-title">แก้ไขหนังสือ</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+            <input type="hidden" name="book_id" id="editBookId">
+            <div class="mb-3">
+                <label>ชื่อหนังสือ</label>
+                <input type="text" name="name" id="editName" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>ผู้แต่ง</label>
+                <input type="text" name="author" id="editAuthor" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>ISBN</label>
+                <input type="text" name="isbn" id="editIsbn" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>หมวดหมู่</label>
+                <input type="text" name="category" id="editCategory" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label>เปลี่ยนรูป (ถ้าต้องการ)</label>
+                <input type="file" name="image" id="editImage" class="form-control">
+            </div>
+            </div>
+            <div class="modal-footer">
+            <button type="submit" class="btn btn-success">บันทึก</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let editBtns = document.querySelectorAll(".edit-btn");
+        let editForm = document.getElementById("editForm");
+
+        editBtns.forEach(btn => {
+            btn.addEventListener("click", function() {
+                document.getElementById("editBookId").value = this.dataset.id;
+                document.getElementById("editName").value = this.dataset.name;
+                document.getElementById("editAuthor").value = this.dataset.author;
+                document.getElementById("editIsbn").value = this.dataset.isbn;
+                document.getElementById("editCategory").value = this.dataset.category;
+            });
+        });
+
+        editForm.addEventListener("submit", function(e) {
+            e.preventDefault();
+
+            let bookId = document.getElementById("editBookId").value;
+            let formData = new FormData(editForm);
+
+            fetch(`/edit_book/${bookId}/`, {
+                method: "POST",
+                body: formData,
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload(); // รีโหลดหน้าเพื่ออัปเดตตาราง
+                } else {
+                    alert("เกิดข้อผิดพลาด: " + data.error);
+                }
+            });
+        });
+    });
+    </script>
     </div>
 {% endblock %}

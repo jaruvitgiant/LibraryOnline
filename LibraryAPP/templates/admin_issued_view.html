@@ -1,19 +1,20 @@
-{% extends 'student_navbar.html' %}
+{% extends 'admin_navbar.html' %}
 {% load static %}
-{% block title %} All Students List {% endblock %}
+{% block title %} Library Management System {% endblock %}
 {% block css %}
 {% endblock %}
 {% block body %}
 <div class="container mt-5">
-    <h1 class="text-center"><u>ประวัติการยืมหนังสือของฉัน</u></h1>
+    <h1 class="text-center"><u>ประวัติการยืม-คืนหนังสือทั้งหมด</u></h1>
     <hr>
     
-    <table class="table table-bordered table-striped">
+    <table class="table table-bordered table-striped table-responsive">
         <thead class="thead-dark">
             <tr>
                 <th>#</th>
+                <th>ชื่อผู้ยืม</th>
+                <th>ข้อมูลผู้ยืม (สาขา/เลขที่)</th>
                 <th>ชื่อหนังสือ</th>
-                <th>ผู้แต่ง</th>
                 <th>วันที่ยืม</th>
                 <th>วันครบกำหนด</th>
                 <th>วันที่คืนจริง</th>
@@ -24,8 +25,9 @@
             {% for record in details %}
             <tr>
                 <td>{{ forloop.counter }}</td>
+                <td>{{ record.student_name }}</td>
+                <td>{{ record.student_info }}</td>
                 <td>{{ record.book_title }}</td>
-                <td>{{ record.book_author }}</td>
                 <td>{{ record.issue_date }}</td>
                 <td>{{ record.expiry_date }}</td>
                 <td>{{ record.return_date }}</td>
@@ -37,13 +39,13 @@
                     {% elif record.status == "rejected" %}
                         <span class="badge bg-danger">ถูกปฏิเสธ</span>
                     {% else %}
-                        <span class="badge bg-secondary">สถานะ: {{ record.status }}</span> 
+                        <span class="badge bg-secondary">อื่นๆ ({{ record.status }})</span> 
                     {% endif %}
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" class="text-center">ยังไม่มีประวัติการยืมหนังสือ</td>
+                <td colspan="8" class="text-center">ยังไม่มีประวัติการยืม-คืนหนังสือ</td>
             </tr>
             {% endfor %}
         </tbody>

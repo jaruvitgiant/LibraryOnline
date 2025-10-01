@@ -5,7 +5,7 @@
 {% endblock %}
 {% block body %}
 <div class="container">
-    <form method="POST"> {% csrf_token %}
+    <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
     <div class="row mt-4">
         <div class="form-group col-md-12">
             <label><i style="font-weight: bold;">Book Name</i></label>
@@ -33,8 +33,17 @@
             <input type="text" class="form-control mt-2" name="category" placeholder="Enter Category of the book" required>
         </div>
     </div>
+
+    <div class="row mt-4">
+        <div class="form-group col-md-12">
+            <label><i style="font-weight: bold;">Book Image</i></label>
+            <input type="file" class="form-control mt-2" name="image" accept="image/*" required>
+        </div>
+    </div>
+
     <button type="submit" class="btn btn-outline-primary mt-4">Add Book</button>
 </div>
+
 </form>
 {% endblock %}
 {% block js %}
